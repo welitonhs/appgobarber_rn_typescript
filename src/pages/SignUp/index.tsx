@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import { Form } from '@unform/mobile';
+import { FormHandles } from '@unform/core';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -21,8 +23,20 @@ import {
   BackToSignInText,
 } from './styles';
 
+interface DataForm {
+  name: string;
+  email: string;
+  password: string;
+}
+
 const SignUp: React.FC = () => {
+  const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+
+  const handleSignUp = useCallback((data: DataForm) => {
+    console.log(data);
+  }, []);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -39,13 +53,14 @@ const SignUp: React.FC = () => {
             <View>
               <Title>Crie sua Conta</Title>
             </View>
-            <Input name="Name" icon="lock" placeholder="Nome" />
-            <Input name="Email" icon="mail" placeholder="E-mail" />
-            <Input name="Password" icon="lock" placeholder="Password" />
-
+            <Form ref={formRef} onSubmit={handleSignUp}>
+              <Input name="name" icon="user" placeholder="Nome" />
+              <Input name="email" icon="mail" placeholder="E-mail" />
+              <Input name="password" icon="lock" placeholder="Password" />
+            </Form>
             <Button
               onPress={() => {
-                console.log('Deu');
+                formRef.current?.submitForm();
               }}
             >
               Cadastrar
